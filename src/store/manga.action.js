@@ -1,7 +1,9 @@
-import firebase from "react-native-firebase";
-import { AsyncStorage } from "react-native";
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
-import { loadImageRatio } from '../store/image.action';
+import {AsyncStorage} from 'react-native';
+
+import {loadImageRatio} from '../store/image.action';
 
 export const MANGAS_LOADED = 'MANGAS_LOADED';
 export const LOAD_MANGAS = 'LOAD_MANGAS';
@@ -19,20 +21,18 @@ export const LOAD_PAGES = 'LOAD_PAGES';
 export const CHAPTER_MARKED_AS_READ = 'CHAPTER_MARKED_AS_READ';
 export const MARK_CHAPTER_AS_READ = 'MARK_CHAPTER_AS_READ';
 
-
-
-const getChapterNumber = (chapter) => {
+const getChapterNumber = chapter => {
   const indexOfUnderscore = chapter.indexOf('_');
-  const number = chapter.substring(indexOfUnderscore+1, chapter.length);
+  const number = chapter.substring(indexOfUnderscore + 1, chapter.length);
   const lengthStr = number.length;
-  if (number.substring(0, 3) === "000") {
+  if (number.substring(0, 3) === '000') {
     return number.substring(3, lengthStr);
-  } else if (number.substring(0, 2) === "00") {
+  } else if (number.substring(0, 2) === '00') {
     return number.substring(2, lengthStr);
   } else if (number[0] === '0') {
     return number.substring(1, lengthStr);
   } else {
-    return number
+    return number;
   }
 };
 
@@ -45,39 +45,43 @@ export function mangasLoaded(data) {
 }
 
 export function loadMangas(userMail, userPassword) {
-  return (dispatch) => {
-    dispatch({ type: LOAD_MANGAS });
-    return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+  return dispatch => {
+    dispatch({type: LOAD_MANGAS});
+    return auth()
+      .signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
-        return firebase.firestore()
-          .collection('mangasList').doc('mangas').get()
+        return firestore().collection('mangasList').doc('mangas').get();
       })
-      .then((data) => {
-        const isMangaFavorite = async (manga) => {
+      .then(data => {
+        const isMangaFavorite = async manga => {
           let isMangaFavorite = 'off';
           try {
-            isMangaFavorite = await AsyncStorage.getItem(manga) || 'off';
+            isMangaFavorite = (await AsyncStorage.getItem(manga)) || 'off';
           } catch (error) {
             console.log(error.message);
           }
-          return (isMangaFavorite === 'on');
+          return isMangaFavorite === 'on';
         };
         var promisesManga = [];
         data._data.list.map((item, index) => {
           promisesManga.push(
-            isMangaFavorite(item.name)
-              .then((isMangaFavorite) => { return {
-                id: item.name, status: item.status, imgUrl: item.imgUrl,
-                authors: item.authors, lastChapter: item.lastChapter,
-                number: index, isMangaFavorite: isMangaFavorite
-              }})
+            isMangaFavorite(item.name).then(isMangaFavorite => {
+              return {
+                id: item.name,
+                status: item.status,
+                imgUrl: item.imgUrl,
+                authors: item.authors,
+                lastChapter: item.lastChapter,
+                number: index,
+                isMangaFavorite: isMangaFavorite,
+              };
+            }),
           );
         });
         return Promise.all(promisesManga);
-
       })
-      .then((data) => dispatch(mangasLoaded({ mangas: data })))
-      .catch((error) => dispatch(mangasLoaded({ error: error })));
+      .then(data => dispatch(mangasLoaded({mangas: data})))
+      .catch(error => dispatch(mangasLoaded({error: error})));
   };
 }
 
@@ -93,15 +97,16 @@ export function mangaMarkedAsFavorite(data) {
   return {
     type: MANGA_MARKED_AS_FAVORITE,
     manga: data.manga,
-    isFavorite: data.isFavorite
+    isFavorite: data.isFavorite,
   };
 }
 
 export function markMangaAsFavorite(manga, value) {
-  return (dispatch) => {
-    dispatch({ type: MARK_MANGA_AS_FAVORITE });
-    return markAsFavorite(manga, (value) ? 'on' : 'off')
-      .then(() => dispatch(mangaMarkedAsFavorite({ manga: manga, isFavorite: value })));
+  return dispatch => {
+    dispatch({type: MARK_MANGA_AS_FAVORITE});
+    return markAsFavorite(manga, value ? 'on' : 'off').then(() =>
+      dispatch(mangaMarkedAsFavorite({manga: manga, isFavorite: value})),
+    );
   };
 }
 
@@ -111,74 +116,87 @@ export function chaptersLoaded(data) {
     chapters: data.chapters,
     error: data.error,
   };
-};
+}
 
 export function loadChapters(userMail, userPassword, manga) {
-  return (dispatch) => {
-    dispatch({ type: LOAD_CHAPTERS });
-    dispatch({ type: RESET_FILTER });
-    return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+  return dispatch => {
+    dispatch({type: LOAD_CHAPTERS});
+    dispatch({type: RESET_FILTER});
+    return auth()
+      .signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
-        return firebase.firestore()
-          .collection('mangasChapters').doc(manga).get();
+        return firestore().collection('mangasChapters').doc(manga).get();
       })
-      .then((data) => {
-        const isChapterRead = async (chapter) => {
+      .then(data => {
+        const isChapterRead = async chapter => {
           let isChapterRead = '0';
           try {
-            isChapterRead = await AsyncStorage.getItem(chapter) || '0';
+            isChapterRead = (await AsyncStorage.getItem(chapter)) || '0';
           } catch (error) {
             console.log(error.message);
           }
-          return (isChapterRead === '1');
+          return isChapterRead === '1';
         };
         var promisesChapter = [];
-        data._data.chaptersList.map((item) => {
+        data._data.chaptersList.map(item => {
           promisesChapter.push(
-            isChapterRead(item)
-              .then((isChapterRead) => { return {id: item, number: getChapterNumber(item), isChapterRead:isChapterRead }})
+            isChapterRead(item).then(isChapterRead => {
+              return {
+                id: item,
+                number: getChapterNumber(item),
+                isChapterRead: isChapterRead,
+              };
+            }),
           );
         });
         return Promise.all(promisesChapter);
       })
-      .then((data) => dispatch(chaptersLoaded({ chapters: data.sort((a, b) => b.number - a.number) })))
-      .catch((error) => dispatch(chaptersLoaded({ error: error })));
+      .then(data =>
+        dispatch(
+          chaptersLoaded({chapters: data.sort((a, b) => b.number - a.number)}),
+        ),
+      )
+      .catch(error => dispatch(chaptersLoaded({error: error})));
   };
 }
 
 export function filterChapterList() {
   return {
     type: CHAPTERS_FILTER,
-  }
+  };
 }
 
 export function pagesLoaded(data) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({
       type: PAGES_LOADED,
       pages: data.pages,
       error: data.error,
     });
     return dispatch(loadImageRatio(data.pages[0].url));
-  }
-};
+  };
+}
 
 export function loadPages(userMail, userPassword, manga, chapterId) {
-  return (dispatch) => {
-    dispatch({ type: LOAD_PAGES });
-    return firebase.auth().signInWithEmailAndPassword(userMail, userPassword)
+  return dispatch => {
+    dispatch({type: LOAD_PAGES});
+    return auth()
+      .signInWithEmailAndPassword(userMail, userPassword)
       .then(() => {
-        return firebase.firestore()
-          .collection('mangasChapters').doc(manga)
-          .collection('chapters').doc(chapterId).get();
+        return firestore()
+          .collection('mangasChapters')
+          .doc(manga)
+          .collection('chapters')
+          .doc(chapterId)
+          .get();
       })
-      .then((data) => {
-        return data._data.pages
+      .then(data => {
+        return data._data.pages;
       })
-      .then((data) => dispatch(pagesLoaded({ pages: data })))
-      .catch((error) => {
+      .then(data => dispatch(pagesLoaded({pages: data})))
+      .catch(error => {
         console.log(error);
-        dispatch(pagesLoaded({ error: error }))
+        dispatch(pagesLoaded({error: error}));
       });
   };
 }
@@ -195,14 +213,15 @@ export function chapterMarkedAsRead(data) {
   return {
     type: CHAPTER_MARKED_AS_READ,
     id: data.id,
-    isRead: data.isRead
+    isRead: data.isRead,
   };
 }
 
 export function markChapterAsRead(id, value) {
-  return (dispatch) => {
-    dispatch({ type: MARK_CHAPTER_AS_READ });
-    return markAsRead(id, (value) ? '1' : '0')
-      .then(() => dispatch(chapterMarkedAsRead({ id: id, isRead: value })));
+  return dispatch => {
+    dispatch({type: MARK_CHAPTER_AS_READ});
+    return markAsRead(id, value ? '1' : '0').then(() =>
+      dispatch(chapterMarkedAsRead({id: id, isRead: value})),
+    );
   };
 }

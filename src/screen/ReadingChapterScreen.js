@@ -1,21 +1,27 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TouchableOpacity, Image,
-  ActivityIndicator, Alert, BackHandler,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  Alert,
+  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Header } from 'react-navigation';
-import { loadPages, markChapterAsRead } from '../store/manga.action'
-import { loadImageRatio } from '../store/image.action';
-import { colors } from '../colors';
+import {connect} from 'react-redux';
+// import { Header } from 'react-navigation';
+import {loadPages, markChapterAsRead} from '../store/manga.action';
+import {loadImageRatio} from '../store/image.action';
+import {colors} from '../colors';
 import PageView from '../component/PageView';
-import { images } from '../images';
-import { deviceSize } from '../size';
-import { NavBackButton } from '../component/NavBackButton';
+import {images} from '../images';
+import {deviceSize} from '../size';
+import {NavBackButton} from '../component/NavBackButton';
 
-let headerHeight = Header.HEIGHT;
-let availableHeight = deviceSize.deviceHeight - headerHeight;
+// let headerHeight = Header.HEIGHT;
+let availableHeight = deviceSize.deviceHeight - 90;
 let pageViewHeight = availableHeight * 0.9;
 let bottomNavViewHeight = availableHeight * 0.1;
 
@@ -42,12 +48,13 @@ const styles = StyleSheet.create({
   bottomNavPartView: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   bottomNavTouchableView: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center', justifyContent: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bottomNavTouchableImg: {
     width: bottomNavViewHeight * 0.8,
@@ -61,11 +68,11 @@ const styles = StyleSheet.create({
   markChapterAsReadImg: {
     width: bottomNavViewHeight * 0.95,
     height: bottomNavViewHeight * 0.95,
-  }
+  },
 });
 
 export class ReadingChapterScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({navigation}) => {
     return {
       title: 'Chapter ' + navigation.getParam('chapter', 'none').number,
       headerTitleStyle: {
@@ -73,15 +80,15 @@ export class ReadingChapterScreen extends React.Component {
         fontSize: 22,
         fontWeight: 'bold',
       },
-      headerStyle: { backgroundColor: colors.secondary },
-      headerLeft: <NavBackButton navigation={navigation}/>,
+      headerStyle: {backgroundColor: colors.secondary},
+      headerLeft: <NavBackButton navigation={navigation} />,
     };
   };
 
   constructor(props) {
     super(props);
 
-    const { navigation } = this.props;
+    const {navigation} = this.props;
 
     this.state = {
       manga: navigation.getParam('manga', 'none'),
@@ -99,10 +106,15 @@ export class ReadingChapterScreen extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     if (this.props.connectivity) {
-      this.props.loadPages(this.props.userMail, this.props.userPassword, this.state.manga, this.state.chapter.id);
+      this.props.loadPages(
+        this.props.userMail,
+        this.props.userPassword,
+        this.state.manga,
+        this.state.chapter.id,
+      );
     } else {
       Alert.alert('Warning', 'No internet connection.');
-    } 
+    }
   }
 
   componentWillUnmount() {
@@ -118,25 +130,30 @@ export class ReadingChapterScreen extends React.Component {
   }
 
   onPressNextPage() {
-    if (this.state.currentPageIndex != (this.props.pages.length - 1)) {
+    if (this.state.currentPageIndex != this.props.pages.length - 1) {
       this.setState({
-        currentPageIndex: this.state.currentPageIndex + 1
+        currentPageIndex: this.state.currentPageIndex + 1,
       });
-      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex + 1].url);
+      this.props.loadImageRatio(
+        this.props.pages[this.state.currentPageIndex + 1].url,
+      );
     }
   }
 
   onPressPreviousPage() {
     if (this.state.currentPageIndex != 0) {
       this.setState({
-        currentPageIndex: this.state.currentPageIndex - 1
+        currentPageIndex: this.state.currentPageIndex - 1,
       });
-      this.props.loadImageRatio(this.props.pages[this.state.currentPageIndex - 1].url);
+      this.props.loadImageRatio(
+        this.props.pages[this.state.currentPageIndex - 1].url,
+      );
     }
   }
 
   onPressMarkAsRead() {
-    this.props.markChapterAsRead(this.state.chapter.id, true)
+    this.props
+      .markChapterAsRead(this.state.chapter.id, true)
       .then(() => this.props.navigation.navigate('Chapters'));
   }
 
@@ -144,20 +161,19 @@ export class ReadingChapterScreen extends React.Component {
     if (this.props.pagesLoading) {
       return (
         <View style={styles.loadingView}>
-          <ActivityIndicator size="large" color={colors.secondary}/>
+          <ActivityIndicator size="large" color={colors.secondary} />
         </View>
       );
     }
     return (
       <View style={styles.readingChapterView}>
-        <View style={{ height: pageViewHeight, width: deviceSize.deviceWidth, }}>
-          <PageView pageViewHeight={pageViewHeight}/>
+        <View style={{height: pageViewHeight, width: deviceSize.deviceWidth}}>
+          <PageView pageViewHeight={pageViewHeight} />
         </View>
 
         <View style={styles.bottomNavView}>
           <View style={styles.bottomNavPartView}>
-            {
-              (this.state.currentPageIndex !== 0) &&
+            {this.state.currentPageIndex !== 0 && (
               <TouchableOpacity
                 style={styles.bottomNavTouchableView}
                 onPress={() => this.onPressPreviousPage()}>
@@ -168,7 +184,7 @@ export class ReadingChapterScreen extends React.Component {
                 />
                 <Text style={styles.bottomNavTouchableText}>Prev</Text>
               </TouchableOpacity>
-            }
+            )}
           </View>
 
           <View style={styles.bottomNavPartView}>
@@ -178,29 +194,28 @@ export class ReadingChapterScreen extends React.Component {
           </View>
 
           <View style={styles.bottomNavPartView}>
-            {
-              (this.state.currentPageIndex !== (this.props.pages.length - 1)) ?
-                <TouchableOpacity
-                  style={styles.bottomNavTouchableView}
-                  onPress={() => this.onPressNextPage()}>
-                  <Text style={styles.bottomNavTouchableText}>Next</Text>
-                  <Image
-                    style={styles.bottomNavTouchableImg}
-                    source={images.rightArrow}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-                :
-                <TouchableOpacity
-                  style={styles.bottomNavTouchableView}
-                  onPress={() => this.onPressMarkAsRead()}>
-                  <Image
-                    style={styles.markChapterAsReadImg}
-                    source={images.asRead}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-            }
+            {this.state.currentPageIndex !== this.props.pages.length - 1 ? (
+              <TouchableOpacity
+                style={styles.bottomNavTouchableView}
+                onPress={() => this.onPressNextPage()}>
+                <Text style={styles.bottomNavTouchableText}>Next</Text>
+                <Image
+                  style={styles.bottomNavTouchableImg}
+                  source={images.rightArrow}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.bottomNavTouchableView}
+                onPress={() => this.onPressMarkAsRead()}>
+                <Image
+                  style={styles.markChapterAsReadImg}
+                  source={images.asRead}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -233,8 +248,9 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   markChapterAsRead: (id, value) => dispatch(markChapterAsRead(id, value)),
-  loadImageRatio: (url) => dispatch(loadImageRatio(url)),
-  loadPages: (userMail, userPassword, manga, chapterId) => dispatch(loadPages(userMail, userPassword, manga, chapterId)),
+  loadImageRatio: url => dispatch(loadImageRatio(url)),
+  loadPages: (userMail, userPassword, manga, chapterId) =>
+    dispatch(loadPages(userMail, userPassword, manga, chapterId)),
 });
 export default connect(
   mapStateToProps,

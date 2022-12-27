@@ -1,13 +1,11 @@
 import React from 'react';
-import {
-  StyleSheet, Image, View, ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, Image, View, ActivityIndicator} from 'react-native';
 import ReactNativeZoomableView from '@openspacelabs/react-native-zoomable-view/src/ReactNativeZoomableView';
 
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { deviceSize } from '../size';
-import { colors } from '../colors';
+import {connect} from 'react-redux';
+import {deviceSize} from '../size';
+import {colors} from '../colors';
 
 const styles = StyleSheet.create({
   zoomableView: {
@@ -22,7 +20,7 @@ export class PageView extends React.Component {
     super(props);
 
     this.state = {
-      pageViewHeight: props.pageViewHeight
+      pageViewHeight: props.pageViewHeight,
     };
   }
 
@@ -50,18 +48,19 @@ export class PageView extends React.Component {
         initialZoom={1}
         bindToBorders={true}
         onZoomAfter={this.logOutZoomState}
-        style={styles.zoomableView}
-      >
+        style={styles.zoomableView}>
         <Image
           style={{
-            width: (this.props.imgRatioHW < 1) ?
-              (deviceSize.deviceWidth * 0.95) :
-              ((this.state.pageViewHeight * 0.95) * this.props.imgRatioWH),
-            height: (this.props.imgRatioHW < 1) ?
-              ((deviceSize.deviceWidth * 0.95) * this.props.imgRatioHW) :
-              (this.state.pageViewHeight * 0.95),
+            width:
+              this.props.imgRatioHW < 1
+                ? deviceSize.deviceWidth * 0.95
+                : this.state.pageViewHeight * 0.95 * this.props.imgRatioWH,
+            height:
+              this.props.imgRatioHW < 1
+                ? deviceSize.deviceWidth * 0.95 * this.props.imgRatioHW
+                : this.state.pageViewHeight * 0.95,
           }}
-          source={{ uri: this.props.imgUrl }}
+          source={{uri: this.props.imgUrl}}
         />
       </ReactNativeZoomableView>
     );
@@ -89,7 +88,4 @@ const mapStateToProps = state => ({
   imgError: state.image.imgError,
 });
 
-export default connect(
-  mapStateToProps,
-  null,
-)(PageView);
+export default connect(mapStateToProps, null)(PageView);
