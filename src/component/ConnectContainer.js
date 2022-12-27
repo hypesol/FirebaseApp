@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NetInfo } from 'react-native';
+// import { NetInfo } from 'react-native';
 import AppContainer from '../screen/StackNavigator';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -12,16 +12,16 @@ export class ConnectContainer extends Component {
     this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
   }
 
-  componentDidMount() {
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
-      this.handleConnectivityChange,
-    );
-  }
+  // componentDidMount() {
+  //   NetInfo.isConnected.addEventListener(
+  //     'connectionChange',
+  //     this.handleConnectivityChange,
+  //   );
+  // }
 
-  componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
-  }
+  // componentWillUnmount() {
+  //   NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+  // }
 
   handleConnectivityChange(isConnected) {
     (isConnected ? this.props.updateConnectivity('online') : this.props.updateConnectivity('offline'))
@@ -29,7 +29,7 @@ export class ConnectContainer extends Component {
 
   render() {
     return (
-      <AppContainer/>
+      <AppContainer />
     );
   }
 }

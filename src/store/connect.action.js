@@ -24,7 +24,9 @@ export function userLoggedIn(data) {
 
 export function loginUser(userMail, userPassword, userRemember) {
   return dispatch => {
-    dispatch({type: LOGIN_USER});
+    dispatch({ type: LOGIN_USER });
+    console.log("USER INFO", userMail, userPassword)
+
     return auth()
       .signInWithEmailAndPassword(userMail, userPassword)
       .then(() =>
@@ -37,7 +39,7 @@ export function loginUser(userMail, userPassword, userRemember) {
         ),
       )
       .catch(error =>
-        dispatch(userLoggedIn({error: 'Wrong mail or password'})),
+        dispatch(userLoggedIn({ error: 'Wrong mail or password' })),
       );
   };
 }

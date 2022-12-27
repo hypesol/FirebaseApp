@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../store/connect.action';
 import { colors } from '../colors';
-import { deviceSize} from '../size';
+import { deviceSize } from '../size';
 import { images } from '../images';
 
 const styles = StyleSheet.create({
@@ -174,11 +174,11 @@ export class LoginScreen extends Component {
             <TextInput
               value={this.state.userMail}
               onChangeText={(userMail) => this.setState({ userMail })}
-              placeholder={'Mail'}
+              placeholder={'eMail'}
               selectionColor={colors.secondary}
               keyboardType='email-address'
               style={styles.input}
-              autoCapitalize = 'none'
+              autoCapitalize='none'
             />
             <TextInput
               value={this.state.userPassword}
@@ -187,14 +187,14 @@ export class LoginScreen extends Component {
               selectionColor={colors.secondary}
               secureTextEntry={true}
               style={styles.input}
-              autoCapitalize = 'none'
+              autoCapitalize='none'
             />
             <View style={styles.rememberUserView}>
               <Text style={styles.rememberUserText}>Remember me ?</Text>
               <Switch
                 onValueChange={this.onToggleSwitchRememberMe}
                 value={this.state.userRemember}
-                trackColor={{true: colors.primary}}
+                trackColor={{ true: colors.primary }}
                 thumbColor={"black"}
               />
             </View>
