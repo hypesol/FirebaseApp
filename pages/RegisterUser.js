@@ -12,7 +12,19 @@ const RegisterUser = props => {
   let [userContact, setUserContact] = useState('');
   let [userAddress, setUserAddress] = useState('');
 
+  // const usersCollection = firestore()
+  //   .collection('Users')
+  //   .get()
+  //   .then(collectionSnapshot => {
+  //     console.log('Total users: ', collectionSnapshot.size);
+  //     collectionSnapshot.forEach(documentSnapshot => {
+  //       console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+  //     });
+  //   });
+  // console.log('usersCollection', usersCollection);
+
   handleRegistration = async () => {
+    // return;
     if (userName && userContact && userAddress) {
       /*
         The "add()" method adds the new document with a random unique ID.
