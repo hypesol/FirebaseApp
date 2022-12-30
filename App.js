@@ -17,13 +17,18 @@ import DeleteUser from './pages/DeleteUser';
 import RealTimeAddUpdateUser from './pages/RealTimeAddUpdateUser';
 import AddOrderSummary from './pages/AddOrderSummary';
 
+/* Firebase Authentication Login */
+import Signup from './pages/FirebaseAuthLogin/signup';
+import Login from './pages/FirebaseAuthLogin/login';
+import Dashboard from './pages/FirebaseAuthLogin/dashboard';
+
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="HomeScreen"
+        initialRouteName="Signup"
         screenOptions={{
           headerStyle: {
             backgroundColor: '#03A89E', //Set Header color
@@ -33,6 +38,21 @@ const App = () => {
             fontWeight: 'bold', //Set Header text style
           },
         }}>
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+          options={{title: 'Signup'}}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{title: 'Login'}}
+        />
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{title: 'Dashboard'}}
+        />
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
