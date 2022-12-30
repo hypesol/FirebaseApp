@@ -11,6 +11,7 @@ export default class Dashboard extends Component {
       uid: '',
       catgid: '',
       catgname: '',
+      lastid: '000',
     };
   }
   signOut = () => {
@@ -86,6 +87,12 @@ export default class Dashboard extends Component {
       .get()
       .then(collectionSnapshot => {
         console.log('Total users: ', collectionSnapshot.size);
+        this.state = {
+          lastid: collectionSnapshot.size,
+        };
+
+        console.log('Last Id: ', this.state.lastid);
+
         collectionSnapshot.forEach(documentSnapshot => {
           console.log(
             'User ID: ',
@@ -107,8 +114,10 @@ export default class Dashboard extends Component {
         <View style={styles.container}>
           <TextInput
             style={styles.inputStyle}
-            placeholder="Category Id"
-            value={this.state.email}
+            placeholder={this.state.lastid}
+            // placeholder="Category Id"
+            value={this.state.lastid}
+            // value="Hi"
             onChangeText={val => this.updateInputVal(val, 'catgid')}
           />
           <TextInput
