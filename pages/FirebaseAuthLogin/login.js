@@ -26,7 +26,7 @@ export default class Login extends Component {
     this.setState(state);
   };
   userLogin = () => {
-    if (this.state.email === '' && this.state.password === '') {
+    if (this.state.email === '' || this.state.password === '') {
       Alert.alert('Enter details to signin!');
     } else {
       this.setState({
@@ -46,7 +46,30 @@ export default class Login extends Component {
         })
         // .catch(error => this.setState({errorMessage: error.message}));
         .catch(error => {
-          console.log(error.message);
+          console.log(error.code);
+
+          if (error.code === 'auth/invalid-email') {
+            Alert.alert('That email address is invalid!');
+            this.setState({
+              isLoading: false,
+              email: '',
+              password: '',
+            });
+          } else if (error.code === 'auth/wrong-password') {
+            Alert.alert('That password is wrong!');
+            this.setState({
+              isLoading: false,
+              // email: '',
+              password: '',
+            });
+          } else if (error.code === 'auth/user-not-found') {
+            Alert.alert('This email is not registered!');
+            this.setState({
+              isLoading: false,
+              email: '',
+              password: '',
+            });
+          }
         });
     }
   };

@@ -18,15 +18,35 @@ export default class Signup extends Component {
       displayName: '',
       email: '',
       password: '',
+      confirmPassword: '',
       isLoading: false,
     };
   }
+
   updateInputVal = (val, prop) => {
     const state = this.state;
     state[prop] = val;
     this.setState(state);
   };
+
+  validatePassword = () => {
+    let isValid = true;
+    if (password !== '' && confirmPassword !== '') {
+      if (password !== confirmPassword) {
+        isValid = false;
+        setError('Passwords does not match');
+      }
+    }
+    return isValid;
+  };
   registerUser = () => {
+    // if (validatePassword()) {
+    //   alert('Password is valid');
+    // } else {
+    //   alert('Password is invalid');
+    // }
+    // return;
+    // validatePassword();
     if (this.state.email === '' && this.state.password === '') {
       Alert.alert('Enter details to signup!');
     } else {
@@ -50,13 +70,11 @@ export default class Signup extends Component {
         })
         // .catch(error => this.setState({errorMessage: error.message}));
         // console.log('Catch Error', error.message);
+        // console.log('Catch Error', error.message);
 
         .catch(error => {
-          if (
-            error.message ==
-            '[auth/email-already-in-use] The email address is already in use by another account.'
-          ) {
-            console.log('Email already exist please try new one');
+          console.log(error.code);
+          if (error.code === 'auth/email-already-in-use') {
             Alert.alert('Email already exist please try new one');
             this.setState({
               isLoading: false,
@@ -64,6 +82,16 @@ export default class Signup extends Component {
               email: '',
               //   password: '',
             });
+          } else if (error.code === 'auth/invalid-email') {
+            Alert.alert('That email address is invalid!');
+            this.setState({
+              isLoading: false,
+              displayName: '',
+              email: '',
+              password: '',
+            });
+          } else if (error.code === 'auth/operation-not-allowed') {
+            Alert.alert('That registrations is disable temporary.');
           } else {
             console.log('Blank Message');
           }
@@ -97,6 +125,14 @@ export default class Signup extends Component {
           placeholder="Password"
           value={this.state.password}
           onChangeText={val => this.updateInputVal(val, 'password')}
+          maxLength={15}
+          secureTextEntry={true}
+        />
+        <TextInput
+          style={styles.inputStyle}
+          placeholder="Repeat Password"
+          value={this.state.password}
+          onChangeText={val => this.updateInputVal(val, 'confirmPassword')}
           maxLength={15}
           secureTextEntry={true}
         />
