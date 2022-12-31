@@ -5,8 +5,12 @@ import 'react-native-gesture-handler';
 
 import * as React from 'react';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor, store } from './pages/store/store';
+
 
 import HomeScreen from './pages/HomeScreen';
 import RegisterUser from './pages/RegisterUser';
@@ -26,75 +30,79 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Dashboard"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#03A89E', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}>
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-          options={{title: 'Signup'}}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{title: 'Login'}}
-        />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{title: 'Dashboard'}}
-        />
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{title: 'Home'}}
-        />
-        <Stack.Screen
-          name="RegisterUser"
-          component={RegisterUser}
-          options={{title: 'Register'}}
-        />
-        <Stack.Screen
-          name="UpdateUser"
-          component={UpdateUser}
-          options={{title: 'Update'}}
-        />
-        <Stack.Screen
-          name="ViewAllUser"
-          component={ViewAllUser}
-          options={{title: 'View All'}}
-        />
-        <Stack.Screen
-          name="ViewUser"
-          component={ViewUser}
-          options={{title: 'View'}}
-        />
-        <Stack.Screen
-          name="DeleteUser"
-          component={DeleteUser}
-          options={{title: 'Delete'}}
-        />
-        <Stack.Screen
-          name="RealTimeAddUpdateUser"
-          component={RealTimeAddUpdateUser}
-          options={{title: 'Real Time Updates'}}
-        />
-        <Stack.Screen
-          name="AddOrderSummary"
-          component={AddOrderSummary}
-          options={{title: 'Add Order Summary'}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Dashboard"
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: '#03A89E', //Set Header color
+              },
+              headerTintColor: '#fff', //Set Header text color
+              headerTitleStyle: {
+                fontWeight: 'bold', //Set Header text style
+              },
+            }}>
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{ title: 'Signup' }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ title: 'Login' }}
+            />
+            <Stack.Screen
+              name="Dashboard"
+              component={Dashboard}
+              options={{ title: 'Dashboard' }}
+            />
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{ title: 'Home' }}
+            />
+            <Stack.Screen
+              name="RegisterUser"
+              component={RegisterUser}
+              options={{ title: 'Register' }}
+            />
+            <Stack.Screen
+              name="UpdateUser"
+              component={UpdateUser}
+              options={{ title: 'Update' }}
+            />
+            <Stack.Screen
+              name="ViewAllUser"
+              component={ViewAllUser}
+              options={{ title: 'View All' }}
+            />
+            <Stack.Screen
+              name="ViewUser"
+              component={ViewUser}
+              options={{ title: 'View' }}
+            />
+            <Stack.Screen
+              name="DeleteUser"
+              component={DeleteUser}
+              options={{ title: 'Delete' }}
+            />
+            <Stack.Screen
+              name="RealTimeAddUpdateUser"
+              component={RealTimeAddUpdateUser}
+              options={{ title: 'Real Time Updates' }}
+            />
+            <Stack.Screen
+              name="AddOrderSummary"
+              component={AddOrderSummary}
+              options={{ title: 'Add Order Summary' }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 };
 
